@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>使用canvas画一个时钟</title>
+</head>
+<body>
+<div class="parent">
+  <canvas id="canvas" width="600" height="600"></canvas>
+</div>
+</body>
+</html>
+
+<script>
+  const canvas = document.querySelector('#canvas')
+  const ctx = canvas.getContext('2d');
+
+  setInterval(() => {
+    start();
+  }, 1000);
+
+  function start() {
+    ctx.save()
+    ctx.clearRect(0, 0, 600, 600)
+    ctx.translate(300, 300);
+    // 把状态保存起来
+    ctx.save();
+    // 画一个大圆
+    ctx.beginPath()
+    // 画圆线使用acr (中心点x, 中心点y, 半径, 起始角度, 结束角度) Math.PI为180度
+    ctx.arc(0, 0, 100, 0, Math.PI * 2);
+    ctx.stroke() // 执行画线段的操作
+    ctx.closePath()
+
+    // 画一个小圆
+    ctx.beginPath()
+    ctx.arc(0, 0, 5, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.closePath()
+
+    // 获取时间
+    const date = new Date();
+    const hour = date.getHours() % 12;
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+
+    // 画时针
+    ctx.rotate(2 * Math.PI / 12 * (hour + (minute / 60)) - Math.PI / 2);
+    ctx.beginPath()
+    ctx.moveTo(-10, 0)
+    ctx.lineTo(40, 0)
+    ctx.lineWidth = 10;
+    ctx.stroke()
+    ctx.closePath()
+
+    ctx.restore() // 还原
+    ctx.save()
+    // 画分针
+    ctx.rotate(2 * Math.PI / 60 * minute - Math.PI / 2);
+    ctx.beginPath()
+    ctx.moveTo(-10, 0)
+    ctx.lineTo(70, 0)
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = 'green'
+    ctx.stroke();
+    ctx.closePath()
+
+    ctx.restore();
+    ctx.save();
+
+    // 画秒针
+    ctx.rotate(2 * Math.PI / 60 * second - Math.PI / 2);
+    ctx.beginPath()
+    ctx.moveTo(-10, 0)
+    ctx.lineTo(80, 0)
+    ctx.lineWidth= 2
+    ctx.strokeStyle = 'pink'
+    ctx.stroke();
+    ctx.closePath()
+
+    ctx.restore()
+    ctx.save();
+
+    // 画刻度
+    ctx.lineWidth = 1
+    for (let i=0; i<60; i++) {
+      ctx.rotate(Math.PI *2 / 60);
+      ctx.beginPath()
+      ctx.moveTo(90, 0)
+      ctx.lineTo(100, 0)
+      ctx.stroke()
+      ctx.closePath()
+    }
+    ctx.restore()
+    ctx.save()
+    ctx.lineWidth = 4;
+
+    for (let i=0; i< 12;i++) {
+      ctx.rotate(Math.PI *2/12);
+      ctx.beginPath()
+      ctx.moveTo(85, 0)
+      ctx.lineTo(100, 0)
+      ctx.stroke()
+      ctx.closePath()
+    }
+    ctx.restore()
+    ctx.restore()
+  }
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .parent {
+    width: 100%;
+  }
+
+  #canvas {
+    margin: 0 auto;
+    display: block;
+  }
+</style>
