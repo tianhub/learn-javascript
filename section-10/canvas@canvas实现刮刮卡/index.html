@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>canvas实现刮刮卡</title>
+</head>
+<body>
+<div class="container">
+  <div class="gift">谢谢惠顾，再买一张</div>
+  <canvas id="canvas" width="400" height="100"></canvas>
+</div>
+</body>
+</html>
+
+<script>
+
+  const canvas = document.getElementById('canvas')
+  const ctx = canvas.getContext('2d');
+
+  // 盖一层遮罩
+  ctx.fillStyle = 'darkgray'
+  ctx.fillRect(0, 0, 400, 100)
+
+  ctx.fillStyle = '#fff'
+  ctx.font = '20px sans-serif'
+  ctx.fillText('刮奖区', 180, 50)
+
+  // 设置鼠标划过透明
+
+  let isDraw = false;
+
+  canvas.onmousedown = function () {
+    isDraw = true;
+  }
+
+  canvas.onmouseup = function () {
+    isDraw = false;
+  }
+
+  canvas.onmousemove = function (e) {
+    if (!isDraw) { return false }
+    let x = e.pageX - canvas.offsetLeft
+    let y = e.pageY - canvas.offsetTop
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath()
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.fill()
+    ctx.closePath();
+  }
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .gift {
+    top: 40px;
+    position: absolute;
+    z-index: -1;
+  }
+</style>
